@@ -11,6 +11,7 @@ def main():
     """Qorex — quantum-vulnerability scanner for cryptographic code."""
 
 
+
 @main.command()
 @click.argument("path", default=".", type=click.Path(exists=True))
 @click.option("--report", "report_format", type=click.Choice(["json"]), default=None, help="Export findings as structured report.")
@@ -21,3 +22,10 @@ def scan(path, report_format, output):
     render_findings(findings, path)
     if report_format == "json":
         export_json(findings, output)
+
+
+@main.command()
+def tui():
+    """Launch the interactive terminal UI."""
+    from qorex.tui import run
+    run()

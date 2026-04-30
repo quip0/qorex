@@ -4,8 +4,9 @@
 
 [![PyPI version](https://badge.fury.io/py/qorex.svg)](https://pypi.org/project/qorex/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 
-Government mandates (CNSA 2.0, CMMC) require organizations to migrate away from quantum-vulnerable cryptography by 2030. Qorex finds the vulnerable code for you and tells you exactly what to replace it with.
+Government mandates (CNSA 2.0, CMMC) require organizations to migrate away from quantum-vulnerable cryptography by 2030. Qorex scans your codebase, tells you exactly what is vulnerable, and shows you what to replace it with — per NIST standards.
 
 ---
 
@@ -17,7 +18,52 @@ pip install qorex
 
 ---
 
-## Usage
+## Two ways to use it
+
+### Interactive TUI
+
+```bash
+qorex tui
+```
+
+A full-screen terminal interface. Type a path, hit scan, navigate findings with `j`/`k`, and read the migration guidance for each one without leaving your terminal.
+
+```
+ ██████╗  ██████╗ ██████╗ ███████╗██╗  ██╗
+██╔═══██╗██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝
+██║   ██║██║   ██║██████╔╝█████╗   ╚███╔╝
+██║▄▄ ██║██║   ██║██╔══██╗██╔══╝   ██╔██╗
+╚██████╔╝╚██████╔╝██║  ██║███████╗██╔╝ ██╗
+ ╚══▀▀═╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+Quantum-Vulnerability Scanner  ◈  NIST PQC Migration Guidance
+
+ ◈ PATH  [./my-project___________________]  [⬡  SCAN]
+
+ ◈ FINDINGS — 2 critical · 1 high     ┃  ◈ DETAIL
+ ──────────────────────────────────── ┃  ──────────────────────
+ ● CRITICAL  RSA    src/auth/keys.py  ┃  ● CRITICAL
+ ● CRITICAL  ECDSA  src/crypto/sign.go┃  ────────────────────
+ ◆ HIGH      SHA-256 src/utils/hash.j ┃  ALGORITHM   RSA
+                                      ┃  LOCATION    src/auth/keys.py : 12
+                                      ┃
+                                      ┃  EXPLANATION
+                                      ┃    RSA is broken by Shor's
+                                      ┃    algorithm on a quantum
+                                      ┃    computer.
+                                      ┃
+                                      ┃  MIGRATION PATH
+                                      ┃    Replace with ML-KEM per
+                                      ┃    NIST FIPS 203.
+                                      ┃
+                                      ┃  NIST REPLACEMENT
+                                      ┃    ML-KEM / ML-DSA
+```
+
+**Keyboard shortcuts:** `s` scan · `j`/`k` navigate · `Enter` select · `Ctrl+O` focus path · `q` quit
+
+---
+
+### CLI (non-interactive)
 
 ```bash
 # Scan a directory
@@ -26,15 +72,29 @@ qorex scan ./my-project
 # Scan current directory
 qorex scan
 
-# Export full JSON report with migration guidance
+# Export structured JSON with full migration guidance
 qorex scan ./my-project --report json --output report.json
+```
+
+**Example output:**
+
+```
+qorex — scanned ./my-project
+
+ Risk       Algorithm   File                        Line   Match
+ ────────── ─────────── ─────────────────────────── ────── ──────────────────────
+ CRITICAL   RSA         src/auth/keys.py              12   rsa.generate_private_key
+ CRITICAL   ECDSA       src/crypto/sign.go            34   ecdsa.Sign
+ HIGH       SHA-256     src/utils/hash.java            8   SHA-256
+
+3 finding(s) — run with --report json for full details and migration guidance.
 ```
 
 ---
 
 ## What it detects
 
-| Algorithm | Risk | Threat | Replacement (NIST) |
+| Algorithm | Risk | Threat | NIST Replacement |
 |---|---|---|---|
 | RSA | CRITICAL | Shor's algorithm | ML-KEM / ML-DSA (FIPS 203/204) |
 | ECDH | CRITICAL | Shor's algorithm | ML-KEM (FIPS 203) |
@@ -44,48 +104,27 @@ qorex scan ./my-project --report json --output report.json
 | AES-128 | HIGH | Grover's algorithm | AES-256 (CNSA 2.0) |
 | SHA-256 | HIGH | Grover's algorithm | SHA-384 / SHA-512 (CNSA 2.0) |
 
-**Languages supported:** Python, C, C++, Go, Java
+**Languages:** Python · C · C++ · Go · Java
 
 ---
 
-## Example output
+## Documentation
 
-```
-qorex — scanned ./my-project
-
- Risk       Algorithm   File                          Line   Match
- ────────── ─────────── ───────────────────────────── ────── ──────────────────────
- CRITICAL   RSA         src/auth/keys.py               12    rsa.generate_private_key
- CRITICAL   ECDSA       src/crypto/sign.go             34    ecdsa.Sign
- HIGH       SHA-256     src/utils/hash.java            8     SHA-256
-
-3 finding(s) — run with --report json for full details and migration guidance.
-```
-
----
-
-## JSON report
-
-```bash
-qorex scan . --report json --output report.json
-```
-
-Each finding includes the file, line, algorithm, risk level, plain-English explanation, NIST replacement algorithm, and migration guidance.
+| Doc | Description |
+|---|---|
+| [Usage Guide](docs/usage.md) | CLI reference, TUI guide, JSON report format |
+| [Detection Rules](docs/detection-rules.md) | Every algorithm, why it's vulnerable, and how to fix it |
+| [Adding Rules](docs/adding-rules.md) | How to extend Qorex with new detection rules |
 
 ---
 
 ## Roadmap
 
 - [ ] CBOM (Cryptographic Bill of Materials) export
-- [ ] CNSA 2.0 / CMMC compliance reports
+- [ ] CNSA 2.0 / CMMC compliance report PDF
 - [ ] CI/CD integrations (GitHub Actions, GitLab CI)
 - [ ] Tree-sitter AST scanning for C/C++
-
----
-
-## Contributing
-
-Issues and PRs welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+- [ ] Rust and JavaScript/TypeScript support
 
 ---
 
