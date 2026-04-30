@@ -29,7 +29,7 @@ dependencies = [
 qorex = "qorex.cli:main"
 
 [project.urls]
-Repository = "https://github.com/pochian/qorex"
+Repository = "https://github.com/quip0/qorex"
 
 [tool.setuptools.packages.find]
 where = ["."]
