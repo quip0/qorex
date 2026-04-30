@@ -26,7 +26,7 @@ pip install qorex
 qorex tui
 ```
 
-A full-screen terminal interface. Type a path, hit scan, navigate findings with `j`/`k`, and read the migration guidance for each one without leaving your terminal.
+A full-screen terminal interface. Type a path, press Enter to scan, then browse findings with `↑`/`↓`. The detail panel updates live as you move — algorithm, matched code, explanation, and migration guidance all in one view. All shortcuts are shown on-screen so you never need to look anything up.
 
 ```
  ██████╗  ██████╗ ██████╗ ███████╗██╗  ██╗
@@ -35,31 +35,37 @@ A full-screen terminal interface. Type a path, hit scan, navigate findings with 
 ██║▄▄ ██║██║   ██║██╔══██╗██╔══╝   ██╔██╗
 ╚██████╔╝╚██████╔╝██║  ██║███████╗██╔╝ ██╗
  ╚══▀▀═╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-Quantum-Vulnerability Scanner  ◈  NIST PQC Migration Guidance
+Quantum-Vulnerability Scanner  ·  NIST PQC Migration Guidance  v0.1.0
 
- ◈ PATH  [./my-project___________________]  [⬡  SCAN]
+ PATH  [./my-project___________________]  [⬡  SCAN]
+ Enter scan · Tab move focus · ↑↓ browse · Ctrl+L edit path · Ctrl+S rescan · Q quit
 
- ◈ FINDINGS — 2 critical · 1 high     ┃  ◈ DETAIL
- ──────────────────────────────────── ┃  ──────────────────────
- ● CRITICAL  RSA    src/auth/keys.py  ┃  ● CRITICAL
- ● CRITICAL  ECDSA  src/crypto/sign.go┃  ────────────────────
- ◆ HIGH      SHA-256 src/utils/hash.j ┃  ALGORITHM   RSA
-                                      ┃  LOCATION    src/auth/keys.py : 12
-                                      ┃
-                                      ┃  EXPLANATION
-                                      ┃    RSA is broken by Shor's
-                                      ┃    algorithm on a quantum
-                                      ┃    computer.
-                                      ┃
-                                      ┃  MIGRATION PATH
-                                      ┃    Replace with ML-KEM per
-                                      ┃    NIST FIPS 203.
-                                      ┃
-                                      ┃  NIST REPLACEMENT
-                                      ┃    ML-KEM / ML-DSA
+ FINDINGS — 2 critical · 1 high        ┃  DETAIL
+ ────────────────────────────────────  ┃  ─────────────────────────
+ ● CRITICAL  RSA    src/auth/keys.py   ┃  ● CRITICAL
+ ● CRITICAL  ECDSA  src/crypto/sign.go ┃  ALGORITHM   RSA
+ ◆ HIGH      SHA-256 src/utils/hash.j  ┃  LOCATION    src/auth/keys.py : 12
+                                       ┃  MATCHED CODE
+                                       ┃   rsa.generate_private_key
+                                       ┃  EXPLANATION
+                                       ┃    RSA is broken by Shor's …
+                                       ┃  MIGRATION PATH
+                                       ┃    Replace with ML-KEM (FIPS 203)
+                                       ┃  NIST REPLACEMENT
+                                       ┃    ML-KEM / ML-DSA
+
+ ✓ 3 finding(s)  ·  press ↑↓ to browse, Tab to move between panes
 ```
 
-**Keyboard shortcuts:** `s` scan · `j`/`k` navigate · `Enter` select · `Ctrl+O` focus path · `q` quit
+| Key | Action |
+|---|---|
+| `Enter` | Scan (when path field is focused) |
+| `↑` / `↓` | Browse findings — detail updates live |
+| `Tab` | Cycle focus between path, button, and table |
+| `Ctrl+S` | Rescan at any time |
+| `Ctrl+L` | Jump to path input |
+| `Escape` | Clear detail panel |
+| `Q` | Quit |
 
 ---
 
