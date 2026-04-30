@@ -18,7 +18,7 @@ pip install qorex
 
 ---
 
-## Two ways to use it
+## Two ways to use it:
 
 ### Interactive TUI
 
